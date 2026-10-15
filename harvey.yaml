@@ -5,6 +5,9 @@ persona:
   email: "harvey@yourcompany.com"
   linkedin: "linkedin.com/in/harvey-yourcompany"
   tone: "professional, consultative, confident"
+  # Appended in code to every staged email (native providers). Plain text.
+  # Put your name, a phone number, a postal address, and an opt-out line here.
+  signature: ""
 
 product:
   name: "Your Product"

@@ -37,6 +37,33 @@ URL_RE = re.compile(r"https?://\S+", re.IGNORECASE)
 DELIVERABLE_STATUSES = {"verified", "risky"}
 
 
+def _norm_lines(text: str) -> list[str]:
+    return [" ".join(line.split()) for line in text.strip().splitlines()
+            if line.strip()]
+
+
+def with_signature(body: str, signature: str) -> str:
+    """Append the configured signature to an email body, exactly once.
+
+    Enforced here rather than in the prompt for the same reason as every
+    other check in this module: a model can forget, truncate, or restyle a
+    signature, and a cold email with no sender identity or opt-out line is
+    both a deliverability problem and, under CAN-SPAM, a legal one. If the
+    model already wrote the signature verbatim, it is not doubled.
+    """
+    body = (body or "").strip()
+    signature = (signature or "").strip()
+    if not signature:
+        return body
+    if not body:
+        return signature
+    sig_lines = _norm_lines(signature)
+    body_lines = _norm_lines(body)
+    if len(body_lines) >= len(sig_lines) and body_lines[-len(sig_lines):] == sig_lines:
+        return body
+    return f"{body}\n\n{signature}"
+
+
 @dataclass
 class GateResult:
     ok: bool

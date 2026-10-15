@@ -11,6 +11,7 @@ import logging
 from datetime import datetime, timezone
 
 from harvey.brain import Brain, BrainUnavailable
+from harvey.gate import with_signature
 from harvey.config import HarveyConfig, EnvConfig
 from harvey.integrations.instantly import InstantlyClient
 from harvey.integrations.mail_provider import NATIVE_PROVIDERS, get_mail_provider
@@ -483,7 +484,7 @@ class Handler:
             kind="reply",
             to_email=prospect.email,
             subject=subject or "Re: your note",
-            body=response,
+            body=with_signature(response, getattr(self.config.persona, "signature", "")),
             send_at=datetime.now(timezone.utc).replace(tzinfo=None).isoformat(),
             status="pending_review" if require_approval else "approved",
             provider=self.provider.name if self.provider else "",
@@ -651,7 +652,9 @@ Write a reply that:"""
 - Makes it easy for them to refer (one-line ask)
 - Under 50 words"""
 
-        prompt += "\n\nWrite ONLY the email body. No subject line, no greeting label, no signature block, no markdown."
+        prompt += ("\n\nWrite ONLY the email body. No subject line, no greeting label, "
+                   "no markdown. Do NOT write a signature or sign-off block: the "
+                   "sender's signature is appended automatically after your text.")
 
         response = await self.brain.think(
             prompt, session_id="harvey-handler",

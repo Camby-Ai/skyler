@@ -18,7 +18,7 @@ from datetime import date, datetime, timedelta, timezone
 
 from harvey.brain import Brain
 from harvey.config import HarveyConfig, EnvConfig
-from harvey.gate import pre_send_check
+from harvey.gate import pre_send_check, with_signature
 from harvey.integrations.instantly import InstantlyClient
 from harvey.integrations.mail_provider import NATIVE_PROVIDERS, get_mail_provider
 from harvey.state import StateManager
@@ -390,7 +390,10 @@ class Sender:
                     step=step.step,
                     to_email=email,
                     subject=self._render(step.subject, prospect),
-                    body=self._render(step.body, prospect),
+                    body=with_signature(
+                        self._render(step.body, prospect),
+                        getattr(self.config.persona, "signature", ""),
+                    ),
                     send_at=send_at.isoformat(),
                     status=initial_status,
                     provider=self.provider.name,

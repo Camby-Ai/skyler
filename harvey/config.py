@@ -31,6 +31,10 @@ class PersonaConfig(BaseModel):
     email: str
     linkedin: str
     tone: str
+    # Plain-text block appended, in code, to every email Harvey stages on a
+    # native provider (first touches and replies alike). Prompts are told not
+    # to write one. Empty = no signature.
+    signature: str = ""
 
 
 class OfferConfig(BaseModel):
