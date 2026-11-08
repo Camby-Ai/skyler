@@ -41,9 +41,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/ethanplusai/harvey"
-Issues = "https://github.com/ethanplusai/harvey/issues"
-Changelog = "https://github.com/ethanplusai/harvey/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/camby-ai/skyler"
+Issues = "https://github.com/camby-ai/skyler/issues"
+Changelog = "https://github.com/camby-ai/skyler/blob/main/CHANGELOG.md"
+Upstream = "https://github.com/ethanplusai/harvey"
 
 [project.scripts]
 skyler = "skyler.cli:main"

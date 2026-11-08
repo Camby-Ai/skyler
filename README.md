@@ -39,6 +39,7 @@ anything, and approving mail one message at a time:
 
 - [Why the subscription thing matters](#why-the-subscription-thing-matters)
 - [What Skyler actually does](#what-skyler-actually-does)
+- [What setup actually takes](#what-setup-actually-takes)
 - [Quick start](#quick-start)
 - [You confirm what it looks for](#you-confirm-what-it-looks-for)
 - [The prospecting pipeline](#the-prospecting-pipeline)
@@ -105,6 +106,34 @@ Profiling and outbox draining ride along on **every** cycle regardless, because 
 
 ---
 
+## What setup actually takes
+
+Skyler is free, MIT licensed, and always will be. Standing it up is the part people
+underestimate, so here it is plainly, before you start.
+
+- **A separate sending domain.** Never your main one. Buy it, then warm it for two to
+  four weeks before Skyler sends at volume. There is no shortcut. Cold mail from a cold
+  domain bounces, and the bounces burn the domain.
+- **A mailbox on that domain**, with SPF, DKIM and DMARC set up correctly. Around
+  $7/month on Google Workspace.
+- **Gmail OAuth.** A Google Cloud project, the Gmail API enabled, a Desktop-app OAuth
+  client, then `skyler gmail auth`. Twenty minutes if you have done it before.
+- **An email verifier key.** Without one, every address stays a "guess" and Skyler
+  refuses to send it. Reoon's free tier covers 600 checks a month.
+- **Your ICP and your offer, written down.** This is what decides whether the mail is any
+  good, and it is the part nobody wants to do. Thin input produces thin email.
+- **Then the ramp.** Twenty sends a day in week one, plus ten a week after, capped at
+  fifty on one mailbox. Over 3% bounces and it pauses itself.
+
+Budget a few hours of work spread across two to four weeks, most of it spent waiting on
+domain warmup rather than configuring anything.
+
+**If you would rather not do that.** Setting this up is what I do, including the ICP and
+offer work, which is the part that actually moves reply rate. Reach me at
+mike@mikecamby.com.
+
+---
+
 ## Quick start
 
 ### Prerequisites
@@ -116,7 +145,8 @@ Profiling and outbox draining ride along on **every** cycle regardless, because 
 ### Easiest: let Claude set it up
 
 ```bash
-git clone https://github.com/ethanplusai/harvey.git skyler
+git clone https://github.com/camby-ai/skyler.git
+cd skyler
 cd skyler
 claude
 ```

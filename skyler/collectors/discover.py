@@ -107,7 +107,7 @@ def is_junk(domain: str, name: str = "") -> bool:
 # the settings table: a given city is looked up once, ever.
 
 NOMINATIM = "https://nominatim.openstreetmap.org/search"
-GEOCODE_UA = "Skyler/0.1 (open-source sales agent; github.com/ethanplusai/harvey)"
+GEOCODE_UA = "Skyler/0.1 (open-source sales agent; github.com/camby-ai/skyler)"
 
 
 async def geocode_city(state, city: str, radius_km: int = 40,
@@ -538,7 +538,7 @@ class OpenStreetMap(DiscoveryProvider):
         # load. Walk the mirrors, then RAISE: returning [] would make a
         # throttled run look exactly like a market with no businesses in it.
         headers = {"User-Agent": "Skyler/0.1 (open-source sales agent; "
-                                 "github.com/ethanplusai/harvey)"}
+                                 "github.com/camby-ai/skyler)"}
         r = None
         for i, endpoint in enumerate(self.ENDPOINTS):
             if i:
