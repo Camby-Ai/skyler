@@ -128,6 +128,9 @@ underestimate, so here it is plainly, before you start.
 Budget a few hours of work spread across two to four weeks, most of it spent waiting on
 domain warmup rather than configuring anything.
 
+**The full setup guide** walks every step in order, with the real timeline, the commands,
+and the guardrails: https://claude.ai/artifact/Gxy6M285LZApJHW9khuJ8D
+
 **If you would rather not do that.** Setting this up is what I do, including the ICP and
 offer work, which is the part that actually moves reply rate. Reach me at
 mike@mikecamby.com.
