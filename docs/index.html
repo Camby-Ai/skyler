@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Skyler Setup Guide &middot; CAMBY Ai</title>
+<meta name="description" content="Install Skyler free, then do the part that actually takes work. The full setup guide from CAMBY Ai: the real two to four week timeline, every command in order, and the guardrails that keep it from sending anything you have not approved.">
+<meta name="theme-color" content="#0B0D12">
+<link rel="icon" href="camby-ai-logo-web.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CAMBY Ai">
+<meta property="og:title" content="Skyler Setup Guide">
+<meta property="og:description" content="Install Skyler free, then do the part that actually takes work. The full setup guide from CAMBY Ai: the real two to four week timeline, every command in order, and the guardrails that keep it from sending anything you have not approved.">
+<meta property="og:url" content="https://camby-ai.github.io/skyler/">
+<meta property="og:image" content="https://camby-ai.github.io/skyler/skyler-avatar.png">
+<meta property="og:image:width" content="502">
+<meta property="og:image:height" content="900">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Skyler Setup Guide">
+<meta name="twitter:description" content="Install Skyler free, then do the part that actually takes work. The full setup guide from CAMBY Ai: the real two to four week timeline, every command in order, and the guardrails that keep it from sending anything you have not approved.">
+<meta name="twitter:image" content="https://camby-ai.github.io/skyler/skyler-avatar.png">
+</head>
+<body>
+<style>
+  /* Layout: single column, left-aligned. Gold hairline rules separate numbered
+     sections, mirroring the CAMBY Ai site's "01 / SECTION" structure. */
+  :root {
+    --bg:        #0B0D12;
+    --panel:     #12161E;
+    --panel-2:   #171C26;
+    --line:      #2A2E3A;
+    --line-gold: #4A3B1E;
+    --gold:      #D8AA57;
+    --gold-dim:  #8A6E38;
+    --text:      #F7F3EB;
+    --muted:     #A49B89;
+    --ink:       #17191D;
+    --font-head: Georgia, "Times New Roman", serif;
+    --font-body: Arial, Helvetica, sans-serif;
+    --font-mono: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 16px;
+    line-height: 1.65;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
+  h1, h2, h3, h4 { font-family: var(--font-head); font-weight: normal; text-wrap: balance; margin: 0; }
+  h1 { font-size: clamp(38px, 7vw, 68px); line-height: 1.05; letter-spacing: -0.015em; }
+  h2 { font-size: clamp(27px, 4.4vw, 40px); line-height: 1.15; letter-spacing: -0.01em; }
+  h3 { font-size: clamp(19px, 2.4vw, 23px); line-height: 1.3; }
+  h1 em, h2 em { color: var(--gold); font-style: italic; }
+  p { margin: 0; }
+
+  .eyebrow {
+    font-family: var(--font-body);
+    font-size: 11px;
+    letter-spacing: 0.19em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin: 0;
+  }
+  .eyebrow .sep { color: var(--gold-dim); }
+
+  /* ---------- masthead ---------- */
+  .masthead {
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+  }
+  .masthead .wrap {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; padding-block: 18px;
+  }
+  .masthead img { width: 168px; height: auto; display: block; }
+  .masthead .tag {
+    font-size: 11px; letter-spacing: 0.19em; text-transform: uppercase;
+    color: var(--muted); border-left: 1px solid var(--line-gold); padding-left: 14px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero .wrap { padding-block: clamp(40px, 7vw, 76px); }
+  .hero-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: clamp(28px, 5vw, 56px); align-items: center; }
+  .hero-copy { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+  .lede { font-size: clamp(16px, 1.9vw, 18.5px); color: var(--muted); max-width: 54ch; }
+  .lede strong { color: var(--text); font-weight: normal; }
+
+  .portrait { position: relative; min-width: 0; }
+  .portrait img { width: 100%; max-width: 100%; height: auto; display: block; border: 1px solid var(--line-gold); }
+  .portrait figcaption {
+    margin-top: 12px; font-size: 11px; letter-spacing: 0.17em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .portrait figcaption b { color: var(--gold); font-weight: normal; }
+
+  .facts { display: flex; flex-wrap: wrap; gap: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .fact { flex: 1 1 150px; min-width: 0; padding: 16px 18px 16px 0; }
+  .fact + .fact { border-left: 1px solid var(--line); padding-left: 18px; }
+  .fact dt { font-size: 10.5px; letter-spacing: 0.17em; text-transform: uppercase; color: var(--muted); }
+  .fact dd { margin: 5px 0 0; font-family: var(--font-head); font-size: 21px; color: var(--gold); }
+
+  /* ---------- sections ---------- */
+  section { border-top: 1px solid var(--line); }
+  section .wrap { padding-block: clamp(36px, 5.5vw, 62px); }
+  .sec-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 26px; }
+  .sec-body { display: flex; flex-direction: column; gap: 20px; max-width: 68ch; }
+  .sec-body p { color: var(--muted); }
+  .sec-body p strong { color: var(--text); font-weight: bold; }
+
+  /* ---------- timeline table ---------- */
+  .scroll-x { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; min-width: 440px; font-size: 15px; }
+  caption {
+    text-align: left; font-size: 11px; letter-spacing: 0.17em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 12px;
+  }
+  th, td { text-align: left; padding: 13px 16px 13px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--font-body); font-size: 10.5px; letter-spacing: 0.17em; text-transform: uppercase; color: var(--gold); font-weight: normal; }
+  td.when { color: var(--gold); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td.what { color: var(--text); }
+  td.note { color: var(--muted); font-size: 14px; }
+  tr.heavy td.when { color: var(--text); background: var(--panel-2); padding-left: 12px; }
+
+  /* ---------- steps ---------- */
+  .step { display: grid; grid-template-columns: 62px 1fr; gap: 0 22px; padding-block: 30px; border-top: 1px solid var(--line); }
+  .step:first-of-type { border-top: 0; }
+  .step-num { font-family: var(--font-head); font-size: 34px; color: var(--gold-dim); line-height: 1; padding-top: 4px; font-variant-numeric: tabular-nums; }
+  .step-body { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+  .step-body > p { color: var(--muted); max-width: 62ch; }
+  .step-body h3 em { color: var(--gold); font-style: italic; }
+
+  ul.ticks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  ul.ticks li { position: relative; padding-left: 20px; color: var(--muted); max-width: 62ch; }
+  ul.ticks li::before { content: ""; position: absolute; left: 0; top: 10px; width: 8px; height: 1px; background: var(--gold); }
+  ul.ticks li b { color: var(--text); font-weight: bold; }
+
+  /* ---------- code ---------- */
+  .code { border: 1px solid var(--line); background: var(--panel); }
+  .code-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 9px 12px; border-bottom: 1px solid var(--line); background: var(--panel-2);
+  }
+  .code-top span { font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+  .copy {
+    font-family: var(--font-body); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+    background: transparent; color: var(--gold); border: 1px solid var(--line-gold);
+    padding: 5px 11px; cursor: pointer;
+  }
+  .copy:hover { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .copy:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  pre { margin: 0; padding: 14px; overflow-x: auto; font-family: var(--font-mono); font-size: 13.5px; line-height: 1.75; color: var(--text); }
+  pre .c { color: var(--gold-dim); }
+  code { font-family: var(--font-mono); font-size: 0.92em; color: var(--gold); }
+
+  /* ---------- callout ---------- */
+  .callout { border-left: 2px solid var(--gold); background: var(--panel); padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; }
+  .callout .k { font-size: 10.5px; letter-spacing: 0.17em; text-transform: uppercase; color: var(--gold); }
+  .callout p { color: var(--muted); max-width: 62ch; }
+
+  /* ---------- guardrails ---------- */
+  .rails { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+  .rail { background: var(--bg); padding: 20px; display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+  .rail dt { font-family: var(--font-head); font-size: 18px; color: var(--text); }
+  .rail dd { margin: 0; color: var(--muted); font-size: 14.5px; }
+  .rail .val { color: var(--gold); font-family: var(--font-mono); font-size: 13px; }
+
+  /* ---------- cta ---------- */
+  .cta { background: var(--panel); border-top: 1px solid var(--line-gold); }
+  .cta .wrap { padding-block: clamp(40px, 6vw, 68px); display: flex; flex-direction: column; gap: 24px; }
+  .cta-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(24px, 4vw, 48px); align-items: start; }
+  .contact { border: 1px solid var(--line-gold); padding: 22px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .contact .row { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .contact .row dt { font-size: 10.5px; letter-spacing: 0.17em; text-transform: uppercase; color: var(--muted); }
+  .contact .row dd { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-width: 0; }
+  .contact .v { font-family: var(--font-mono); font-size: 14.5px; color: var(--gold); word-break: break-all; }
+  a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--line-gold); }
+  a:hover { border-bottom-color: var(--gold); }
+  a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+  /* ---------- footer ---------- */
+  footer { border-top: 1px solid var(--line); }
+  footer .wrap { padding-block: 34px; display: flex; flex-direction: column; gap: 18px; }
+  footer img.sig { width: 150px; height: auto; opacity: 0.85; }
+  footer p { font-size: 13.5px; color: var(--muted); max-width: 70ch; }
+  .fine { font-size: 12px; color: var(--gold-dim); }
+
+  @media (max-width: 760px) {
+    .hero-grid, .cta-grid { grid-template-columns: 1fr; }
+    .portrait { max-width: 340px; }
+    .step { grid-template-columns: 1fr; gap: 12px; }
+    .step-num { font-size: 26px; padding-top: 0; }
+    .fact + .fact { border-left: 0; padding-left: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <img src="camby-ai-logo-web.png" alt="CAMBY Ai">
+    <div class="tag">Skyler &middot; Setup Guide</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">00 <span class="sep">/</span> Cold outbound engine</p>
+        <h1>The software is free.<br><em>The setup is the work.</em></h1>
+        <p class="lede">Skyler finds local businesses, reads their websites, writes cold email that references
+          something real, and works the replies toward a booked conversation. It runs on your machine on a
+          loop. <strong>There is no model API bill:</strong> it uses the Claude or ChatGPT plan you already pay for.</p>
+        <p class="lede">What follows is every step, including the ones people underestimate. Read the timeline
+          before you start. Most of it is waiting, not configuring.</p>
+      </div>
+      <figure class="portrait">
+        <img src="skyler-avatar.png" alt="Skyler, the CAMBY Ai cold outbound agent">
+        <figcaption><b>Skyler</b> &middot; Always Be Closing</figcaption>
+      </figure>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">01 <span class="sep">/</span> Before you start</p>
+      <h2>The honest timeline.<br><em>Mostly waiting.</em></h2>
+    </div>
+    <div class="sec-body">
+      <p>Setup is a few hours of actual work spread across two to four weeks. The long pole is domain warmup,
+        and there is no way to shorten it. Cold email from a cold domain bounces, and the bounces burn the
+        domain you just bought. Start the clock on day one, then do everything else while it warms.</p>
+    </div>
+    <div class="scroll-x" style="margin-top:26px">
+      <table>
+        <caption>What actually takes how long</caption>
+        <thead>
+          <tr><th scope="col">When</th><th scope="col">What</th><th scope="col">Your time</th></tr>
+        </thead>
+        <tbody>
+          <tr class="heavy">
+            <td class="when">Day 1</td>
+            <td class="what">Buy the sending domain and start warming it</td>
+            <td class="note">30 minutes, then it runs in the background</td>
+          </tr>
+          <tr>
+            <td class="when">Day 1</td>
+            <td class="what">Install Skyler and run it against the free data source</td>
+            <td class="note">30 minutes</td>
+          </tr>
+          <tr>
+            <td class="when">Day 1 to 3</td>
+            <td class="what">Write down your offer and who it is for</td>
+            <td class="note">1 to 2 hours. This is the part that decides everything.</td>
+          </tr>
+          <tr>
+            <td class="when">Day 2 to 14</td>
+            <td class="what">Read drafts in the outbox and reject the bad ones</td>
+            <td class="note">10 minutes a day, no sending yet</td>
+          </tr>
+          <tr class="heavy">
+            <td class="when">Week 2 to 4</td>
+            <td class="what">Domain warmup finishes</td>
+            <td class="note">Waiting. Nothing you can do to speed this up.</td>
+          </tr>
+          <tr>
+            <td class="when">Launch day</td>
+            <td class="what">Connect the mailbox and start the loop</td>
+            <td class="note">20 minutes</td>
+          </tr>
+          <tr>
+            <td class="when">Week 1 live</td>
+            <td class="what">Approve every email by hand at 20 a day</td>
+            <td class="note">15 minutes a day</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">02 <span class="sep">/</span> The build</p>
+      <h2>Seven steps.<br><em>In this order.</em></h2>
+    </div>
+
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">
+        <h3>Buy the sending domain <em>today</em></h3>
+        <p>Never send cold email from the domain your real business runs on. One spam complaint against your
+          main domain and your normal mail starts landing in spam too. Buy a separate one, close to your brand,
+          and treat it as disposable.</p>
+        <ul class="ticks">
+          <li><b>Buy a lookalike domain.</b> If you are yourbusiness.com, buy yourbusinessteam.com or getyourbusiness.com.</li>
+          <li><b>Put a mailbox on it.</b> Google Workspace is about $7 a month and is the smoothest path.</li>
+          <li><b>Set SPF, DKIM and DMARC.</b> Your registrar and Workspace both document this. Skipping it guarantees the spam folder.</li>
+          <li><b>Warm it.</b> Send 5 to 10 real emails a day from it to people who will reply, for two to four weeks. Or use a warmup tool.</li>
+        </ul>
+        <div class="callout">
+          <span class="k">Why this is first</span>
+          <p>Everything else takes an afternoon. This takes two to four weeks of calendar time. Start it before
+            you install anything, so the waiting happens while you do the rest.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">
+        <h3>Install Skyler</h3>
+        <p>You need Python 3.11 or newer. macOS ships 3.9, which cannot run it, so install a current Python
+          first if that is what <code>python3 --version</code> reports. You also need an active Claude Pro or Max
+          subscription with the CLI logged in, or a ChatGPT plan with the Codex CLI.</p>
+        <div class="code">
+          <div class="code-top"><span>Terminal</span><button class="copy" type="button">Copy</button></div>
+<pre>git clone https://github.com/camby-ai/skyler.git
+cd skyler
+python3.13 -m venv .venv &amp;&amp; source .venv/bin/activate
+pip install -e .
+skyler --help</pre>
+        </div>
+        <p>If <code>skyler</code> comes back as command not found, the virtual environment is not active. Run
+          <code>source .venv/bin/activate</code> from inside the folder again.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        <h3>Teach it your offer <em>properly</em></h3>
+        <p>This is the step that decides whether the email is any good, and it is the one everybody rushes.
+          Skyler reads a URL and writes itself a product-knowledge file from it. Thin input produces thin email.
+          Point it at your best page, not your homepage.</p>
+        <div class="code">
+          <div class="code-top"><span>Terminal</span><button class="copy" type="button">Copy</button></div>
+<pre>skyler train https://your-offer-page.com</pre>
+        </div>
+        <ul class="ticks">
+          <li><b>No website yet?</b> Point it at a one-page document describing what you sell and who buys it.</li>
+          <li><b>Then edit the file by hand.</b> It lands in <code>skills/product_knowledge.md</code>. Your own words beat anything generated from a landing page.</li>
+          <li><b>Be specific about who it is not for.</b> A narrow definition produces better prospects than a broad one.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">04</div>
+      <div class="step-body">
+        <h3>Turn on signals and find businesses</h3>
+        <p>Signals are the observable facts Skyler looks for: no online booking, unanswered reviews, a stale
+          copyright, calls going to voicemail. Twenty-one of them are free. Two cost money and stay off unless
+          you turn them on.</p>
+        <div class="code">
+          <div class="code-top"><span>Terminal</span><button class="copy" type="button">Copy</button></div>
+<pre>skyler signals --confirm free
+skyler discover --estimate   <span class="c"># shows projected spend, spends nothing</span>
+skyler discover              <span class="c"># free OpenStreetMap source</span>
+skyler profile               <span class="c"># reads every site found, no model calls</span></pre>
+        </div>
+        <p>The free source covers dentists, roofers, plumbers, HVAC, electricians, lawyers, contractors and
+          landscapers. Medspas, gyms and salons need a paid key, so it returns nothing there rather than junk.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">05</div>
+      <div class="step-body">
+        <h3>Read the drafts before you can send anything</h3>
+        <p>Open the dashboard and work the outbox while the domain is still warming. Nothing can send yet,
+          which is exactly why this is the right time to tune the copy.</p>
+        <div class="code">
+          <div class="code-top"><span>Terminal</span><button class="copy" type="button">Copy</button></div>
+<pre>skyler dashboard   <span class="c"># http://localhost:5555</span></pre>
+        </div>
+        <ul class="ticks">
+          <li><b>Reject anything generic.</b> If the first email could have been sent to any business in the list, it is not ready.</li>
+          <li><b>Reject anything that says AI, automation or agent.</b> First emails talk about missed calls and empty appointment slots, not software.</li>
+          <li><b>Tune by editing the skills files, not by rejecting forever.</b> Rejections do not teach it. Edits to <code>skills/email_frameworks.md</code> do.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">06</div>
+      <div class="step-body">
+        <h3>Connect the mailbox</h3>
+        <p>Do this only once the domain has warmed. You need a Google Cloud project with the Gmail API enabled
+          and a Desktop-app OAuth client. Budget twenty minutes, or an hour if you have never done it.</p>
+        <ul class="ticks">
+          <li>Create a project at console.cloud.google.com, signed in as the new mailbox.</li>
+          <li>Enable the Gmail API, then create an OAuth client ID of type Desktop app.</li>
+          <li>Paste the client ID and secret into the dashboard's Settings tab.</li>
+          <li>Add an email verifier key. Without one every address stays a guess and Skyler refuses to send it. Reoon's free tier covers 600 checks a month.</li>
+        </ul>
+        <div class="code">
+          <div class="code-top"><span>Terminal</span><button class="copy" type="button">Copy</button></div>
+<pre>skyler gmail auth   <span class="c"># sign in as the NEW mailbox, not your personal gmail</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">07</div>
+      <div class="step-body">
+        <h3>Go live and <em>ramp slowly</em></h3>
+        <p>Start the loop. It wakes every fifteen minutes, decides what the pipeline needs, and does that one
+          thing. Approve every email by hand for the first week.</p>
+        <div class="code">
+          <div class="code-top"><span>Terminal</span><button class="copy" type="button">Copy</button></div>
+<pre>skyler run              <span class="c"># the 15 minute heartbeat</span>
+skyler status           <span class="c"># counts, reply rate by signal</span>
+skyler usage            <span class="c"># how much of your plan it used</span>
+skyler sending pause    <span class="c"># kill switch, stops everything instantly</span></pre>
+        </div>
+        <ul class="ticks">
+          <li><b>Week one:</b> 20 sends a day, every one approved by you.</li>
+          <li><b>After that:</b> add 10 a week if bounces stay under 2 percent. Cap at 50 on a single mailbox.</li>
+          <li><b>Reply rate by signal is the only number that matters.</b> It tells you which vertical and which angle to double down on.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">03 <span class="sep">/</span> Guardrails</p>
+      <h2>What it will not do <em>without you</em></h2>
+    </div>
+    <div class="sec-body" style="margin-bottom:24px">
+      <p>These are enforced in the configuration, not left to good intentions. They ship on by default.</p>
+    </div>
+    <dl class="rails">
+      <div class="rail">
+        <dt>Nothing sends unapproved</dt>
+        <dd>Every email waits in the outbox for a human yes.</dd>
+        <dd class="val">require_approval: true</dd>
+      </div>
+      <div class="rail">
+        <dt>It stops itself on bounces</dt>
+        <dd>Cross the threshold and sending pauses until you fix the list.</dd>
+        <dd class="val">max_bounce_rate: 0.03</dd>
+      </div>
+      <div class="rail">
+        <dt>It will not eat your plan</dt>
+        <dd>Hard ceiling on the share of your subscription it may use per day.</dd>
+        <dd class="val">max_daily_claude_percent: 50</dd>
+      </div>
+      <div class="rail">
+        <dt>Volume stays low on purpose</dt>
+        <dd>Twenty a day out of the gate, regardless of how big the list is.</dd>
+        <dd class="val">max_daily_sends: 20</dd>
+      </div>
+      <div class="rail">
+        <dt>Quiet hours</dt>
+        <dd>No mail overnight in the recipient's timezone.</dd>
+        <dd class="val">20:00 to 08:00</dd>
+      </div>
+      <div class="rail">
+        <dt>CAN-SPAM by construction</dt>
+        <dd>A physical mailing address and an opt-out line are appended in code, once, to every email.</dd>
+        <dd class="val">persona.signature</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<div class="cta">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">04 <span class="sep">/</span> If you would rather not</p>
+      <h2>Where people <em>actually get stuck</em></h2>
+    </div>
+    <div class="cta-grid">
+      <div class="sec-body">
+        <p>Almost nobody stalls on the install. They stall on the three things this guide cannot do for you:
+          getting the domain authentication right so the mail lands, writing down an offer specific enough to
+          be worth reading, and holding the line on rejecting generic drafts for two weeks before a single
+          email goes out.</p>
+        <p>That is the work I do. The tool is free and stays free. If you want it standing up and sending
+          inside two weeks, with the offer and the targeting sorted properly, that is the part worth paying
+          for.</p>
+        <p><strong>Tell me what you sell and who buys it.</strong> I will tell you whether this is the right
+          machine for it before anyone talks about money.</p>
+      </div>
+      <dl class="contact">
+        <div class="row">
+          <dt>Email</dt>
+          <dd><span class="v" id="v-email">mike@mikecamby.com</span>
+            <button class="copy" type="button" data-copy="mike@mikecamby.com">Copy</button></dd>
+        </div>
+        <div class="row">
+          <dt>Text</dt>
+          <dd><span class="v" id="v-phone">747.441.6578</span>
+            <button class="copy" type="button" data-copy="747.441.6578">Copy</button></dd>
+        </div>
+        <div class="row">
+          <dt>Book a time</dt>
+          <dd><a href="https://cal.com/mikecamby">cal.com/mikecamby</a></dd>
+        </div>
+        <div class="row">
+          <dt>The code</dt>
+          <dd><a href="https://github.com/Camby-Ai/skyler">github.com/Camby-Ai/skyler</a></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <img class="sig" src="camby-signature-web.png" alt="Camby">
+    <p>Skyler is CAMBY Ai's build of <a href="https://github.com/ethanplusai/harvey">Harvey</a> by Ethan Rogers,
+      used under the MIT license. The engine is his. We renamed it, packaged it, and run it for clients.
+      Upstream fixes are pulled in by hand.</p>
+    <p class="fine">CAMBY Ai &middot; AI solutions for local businesses &middot; Las Vegas, Nevada &middot; More revenue. Less costs.</p>
+    <p class="fine">Timings describe a typical setup, not a guarantee. Deliverability depends on your domain,
+      your list and your copy. Nothing here promises inbox placement or reply rates.</p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll(".copy").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var text = btn.dataset.copy;
+      if (!text) {
+        var block = btn.closest(".code");
+        var pre = block && block.querySelector("pre");
+        if (!pre) return;
+        text = pre.innerText.replace(/[ \t]*#.*$/gm, "").trim();
+      }
+      var done = function () {
+        var prev = btn.textContent;
+        btn.textContent = "Copied";
+        setTimeout(function () { btn.textContent = prev; }, 1400);
+      };
+      try {
+        navigator.clipboard.writeText(text).then(done, function () { select(btn, text); });
+      } catch (e) {
+        select(btn, text);
+      }
+    });
+  });
+
+  function select(btn, text) {
+    var holder = btn.closest(".code") || btn.parentElement;
+    var target = holder && (holder.querySelector("pre") || holder.querySelector(".v"));
+    if (!target) return;
+    var range = document.createRange();
+    range.selectNodeContents(target);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    btn.textContent = "Select and copy";
+    setTimeout(function () { btn.textContent = "Copy"; }, 2200);
+  }
+</script>
+
+</body>
+</html>
