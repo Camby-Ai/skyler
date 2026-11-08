@@ -14,10 +14,10 @@ import httpx
 import pytest
 import pytest_asyncio
 
-from harvey.collectors import discover as D
-from harvey.config import load_config
-from harvey.signals import SIGNAL_CATALOG, seed_signal_catalog
-from harvey.state import StateManager
+from skyler.collectors import discover as D
+from skyler.config import load_config
+from skyler.signals import SIGNAL_CATALOG, seed_signal_catalog
+from skyler.state import StateManager
 
 
 @pytest_asyncio.fixture
@@ -563,7 +563,7 @@ async def test_geocode_is_cached_so_a_city_is_looked_up_once(state):
 
     def handler(request):
         calls["n"] += 1
-        assert "Harvey" in request.headers["user-agent"]
+        assert "Skyler" in request.headers["user-agent"]
         return httpx.Response(200, json=[{"lat": "39.7392", "lon": "-104.9903"}])
 
     async with _geo_client(handler) as client:

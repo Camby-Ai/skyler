@@ -13,12 +13,12 @@ import yaml
 from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
-import harvey.brain as brain_mod
-import harvey.dashboard as dash
-from harvey.brain import Brain
-from harvey.codex import CodexError, CodexResult
-from harvey.config import BrainConfig, ConfigError, HarveyConfig, load_brain_config
-from harvey.state import StateManager
+import skyler.brain as brain_mod
+import skyler.dashboard as dash
+from skyler.brain import Brain
+from skyler.codex import CodexError, CodexResult
+from skyler.config import BrainConfig, ConfigError, SkylerConfig, load_brain_config
+from skyler.state import StateManager
 
 BASE = {
     "persona": {"name": "H", "company": "A", "role": "B", "email": "e", "linkedin": "", "tone": "t"},
@@ -32,7 +32,7 @@ BASE = {
 def _codex_platform(monkeypatch):
     """These tests cover provider plumbing with stubs, on any OS; the
     Windows refusal itself is tested in test_codex_platform.py."""
-    import harvey.codex as hc
+    import skyler.codex as hc
     monkeypatch.setattr(hc, "_PLATFORM", "linux")
 
 
@@ -48,7 +48,7 @@ async def state():
 
 
 def test_claude_is_the_default():
-    assert HarveyConfig(**BASE).brain.provider == "claude"
+    assert SkylerConfig(**BASE).brain.provider == "claude"
     assert BrainConfig().model == ""
 
 
@@ -62,7 +62,7 @@ def test_brain_config_validation():
 
 
 def test_load_brain_config(tmp_path):
-    path = tmp_path / "harvey.yaml"
+    path = tmp_path / "skyler.yaml"
     assert load_brain_config(str(path)) == BrainConfig()  # missing file
     path.write_text(yaml.dump({"persona": "placeholder"}))
     assert load_brain_config(str(path)).provider == "claude"  # no section
@@ -322,7 +322,7 @@ async def test_codex_budget_uses_codex_quota_and_counter(state):
 
 @pytest.mark.asyncio
 async def test_main_heartbeat_builds_brain_from_config(monkeypatch):
-    import harvey.main as main_mod
+    import skyler.main as main_mod
 
     seen = {}
 
@@ -333,7 +333,7 @@ async def test_main_heartbeat_builds_brain_from_config(monkeypatch):
         seen["config"] = brain_config
         raise StopBrain
 
-    cfg = HarveyConfig(**BASE, brain={"provider": "codex", "model": "gpt-5.5"})
+    cfg = SkylerConfig(**BASE, brain={"provider": "codex", "model": "gpt-5.5"})
     monkeypatch.setattr(main_mod, "load_config", lambda: cfg)
     monkeypatch.setattr(main_mod, "Brain", fake_brain)
     with pytest.raises(StopBrain):
@@ -347,7 +347,7 @@ async def test_main_heartbeat_builds_brain_from_config(monkeypatch):
 @pytest.mark.asyncio
 async def test_existing_usage_rows_become_claude(tmp_path):
     import aiosqlite
-    from harvey.state import MIGRATIONS
+    from skyler.state import MIGRATIONS
 
     db_path = str(tmp_path / "old.db")
     async with aiosqlite.connect(db_path) as db:
@@ -375,7 +375,7 @@ async def test_existing_usage_rows_become_claude(tmp_path):
 
 
 def test_trainer_uses_and_writes_back_the_selection(tmp_path, monkeypatch):
-    import harvey.trainer as trainer_mod
+    import skyler.trainer as trainer_mod
 
     monkeypatch.setattr(trainer_mod, "load_brain_config",
                         lambda: BrainConfig(provider="codex", model="gpt-5.5"))
@@ -384,7 +384,7 @@ def test_trainer_uses_and_writes_back_the_selection(tmp_path, monkeypatch):
     built = trainer._build_config({"product_name": "W"}, {}, {}, "acme.com")
     assert built["brain"] == {"provider": "codex", "model": "gpt-5.5"}
     # The written config loads back with the same selection.
-    assert HarveyConfig(**built).brain == BrainConfig(provider="codex", model="gpt-5.5")
+    assert SkylerConfig(**built).brain == BrainConfig(provider="codex", model="gpt-5.5")
 
     explicit = trainer_mod.Trainer(brain_config=BrainConfig())
     assert explicit.brain.provider == "claude"
@@ -392,9 +392,9 @@ def test_trainer_uses_and_writes_back_the_selection(tmp_path, monkeypatch):
 
 
 def test_cli_train_flags_select_the_provider(monkeypatch):
-    import harvey.cli as cli
-    import harvey.trainer as trainer_mod
-    import harvey.config as config_mod
+    import skyler.cli as cli
+    import skyler.trainer as trainer_mod
+    import skyler.config as config_mod
 
     seen = {}
 
@@ -441,8 +441,8 @@ def _answering(answers, prompts):
     (["claude", "opus"], BrainConfig(model="opus")),
 ])
 def test_setup_model_prompt(monkeypatch, answers, expected):
-    import harvey.setup as setup_mod
-    from harvey.codex import SUGGESTED_MODEL
+    import skyler.setup as setup_mod
+    from skyler.codex import SUGGESTED_MODEL
 
     prompts = []
     monkeypatch.setattr(setup_mod, "_ask", _answering(answers, prompts))
@@ -457,7 +457,7 @@ def test_setup_model_prompt(monkeypatch, answers, expected):
 
 
 def test_setup_writes_the_selection(tmp_path, monkeypatch):
-    import harvey.setup as setup_mod
+    import skyler.setup as setup_mod
 
     answers = iter(["codex", "gpt-5.5"])
     monkeypatch.setattr(setup_mod, "_ask", lambda *a, **k: next(answers))
@@ -465,7 +465,7 @@ def test_setup_writes_the_selection(tmp_path, monkeypatch):
     wizard.brain_config = setup_mod._ask_brain_config()
     assert wizard.brain_config == BrainConfig(provider="codex", model="gpt-5.5")
 
-    config_file = tmp_path / "harvey.yaml"
+    config_file = tmp_path / "skyler.yaml"
     monkeypatch.setattr(setup_mod, "CONFIG_FILE", config_file)
     wizard.config = dict(BASE)
     wizard._write_config()
@@ -479,12 +479,12 @@ def test_setup_writes_the_selection(tmp_path, monkeypatch):
 
 @pytest.mark.asyncio
 async def test_codex_setup_does_not_require_claude(monkeypatch, tmp_path):
-    import harvey.setup as setup_mod
+    import skyler.setup as setup_mod
 
     monkeypatch.setattr(setup_mod, "_check_claude_cli", lambda: False)
     monkeypatch.setattr(setup_mod, "_check_codex_cli", lambda: True)
-    monkeypatch.setattr("harvey.codex.check_native_auth", lambda *a: Path("auth.json"))
-    monkeypatch.setattr("harvey.codex.check_cli_version", lambda *a: "0.159.3")
+    monkeypatch.setattr("skyler.codex.check_native_auth", lambda *a: Path("auth.json"))
+    monkeypatch.setattr("skyler.codex.check_cli_version", lambda *a: "0.159.3")
     monkeypatch.setattr(setup_mod, "StateManager",
                         lambda: StateManager(str(tmp_path / "s.db")))
 
@@ -505,7 +505,7 @@ async def test_codex_setup_does_not_require_claude(monkeypatch, tmp_path):
 
 @pytest.fixture
 def client(monkeypatch, tmp_path):
-    db = tmp_path / "harvey.db"
+    db = tmp_path / "skyler.db"
     asyncio.run(StateManager(str(db)).init_db())
     monkeypatch.setattr(dash, "DB_PATH", db)
     monkeypatch.setattr(dash, "_quota_clients", {})
@@ -564,7 +564,7 @@ def test_dashboard_reports_unavailable_codex_quota(client, monkeypatch):
 
 
 def test_dashboard_codex_quota_client_follows_the_configured_model(client, monkeypatch):
-    import harvey.codex as codex_mod
+    import skyler.codex as codex_mod
 
     built = []
 
@@ -621,9 +621,9 @@ def test_paused_brain_is_visible_on_the_dashboard(client, monkeypatch):
 
 
 def _status_cli(monkeypatch, tmp_path, capsys, *, check, config, setting=""):
-    import harvey.cli as cli
-    import harvey.config as config_mod
-    import harvey.state as state_mod
+    import skyler.cli as cli
+    import skyler.config as config_mod
+    import skyler.state as state_mod
 
     db = str(tmp_path / "status.db")
     if setting:
@@ -691,11 +691,11 @@ def test_quota_card_renders_gauges_and_limit_reached():
 
 
 def test_cli_usage_reads_only_the_active_providers_quota(monkeypatch, tmp_path, capsys):
-    import harvey.cli as cli
-    import harvey.codex as codex_mod
-    import harvey.config as config_mod
-    import harvey.integrations.quota as quota_mod
-    import harvey.state as state_mod
+    import skyler.cli as cli
+    import skyler.codex as codex_mod
+    import skyler.config as config_mod
+    import skyler.integrations.quota as quota_mod
+    import skyler.state as state_mod
 
     monkeypatch.setattr(config_mod, "load_brain_config", lambda: BrainConfig(provider="codex"))
     monkeypatch.setattr(state_mod, "StateManager",

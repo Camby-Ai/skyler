@@ -8,11 +8,11 @@ from datetime import datetime, timedelta, timezone
 import pytest
 import pytest_asyncio
 
-from harvey.gate import pre_send_check
-from harvey.models.campaign import Campaign, EmailStep
-from harvey.models.prospect import Prospect
-from harvey.state import StateManager
-from harvey.integrations.mail_provider import (
+from skyler.gate import pre_send_check
+from skyler.models.campaign import Campaign, EmailStep
+from skyler.models.prospect import Prospect
+from skyler.state import StateManager
+from skyler.integrations.mail_provider import (
     InboundMessage,
     MailProvider,
     SendResult,
@@ -60,7 +60,7 @@ class FakeProvider(MailProvider):
 
 class Cfg:
     class persona:
-        name = "Harvey"; email = "harvey@x.co"; company = "X"; role = "BD"; tone = "direct"
+        name = "Skyler"; email = "skyler@x.co"; company = "X"; role = "BD"; tone = "direct"
 
     class product:
         name = "P"; description = "d"; pricing = "$"; key_benefits = ["b"]
@@ -84,7 +84,7 @@ class Env:
 
 
 def make_sender(state, provider, require_approval=True):
-    from harvey.agents.sender import Sender
+    from skyler.agents.sender import Sender
     cfg = Cfg()
     cfg.channels.email.require_approval = require_approval
     sender = Sender(brain=None, state=state, config=cfg, env=Env())
@@ -110,7 +110,7 @@ class StubBrain:
 
 
 def make_handler(state, provider, intent="question"):
-    from harvey.agents.handler import Handler
+    from skyler.agents.handler import Handler
     handler = Handler(brain=StubBrain(intent=intent), state=state, config=Cfg(), env=Env())
     handler.provider = provider
     return handler

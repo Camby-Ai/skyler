@@ -2,9 +2,9 @@
 
 import pytest
 
-from harvey.gate import pre_send_check, with_signature
-from harvey.models.campaign import Campaign, EmailStep
-from harvey.models.conversation import Conversation
+from skyler.gate import pre_send_check, with_signature
+from skyler.models.campaign import Campaign, EmailStep
+from skyler.models.conversation import Conversation
 
 from tests.test_outbox_native import (  # reuse the native-path fixtures
     FakeProvider, make_handler, make_sender, seed_prospect, state,  # noqa: F401

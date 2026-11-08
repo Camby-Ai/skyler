@@ -2,7 +2,7 @@
 
 Prompts carry untrusted text (prospect replies, scraped pages). If Claude had
 tools, an instruction hidden in that text could run commands or reach the
-operator's connectors. Harvey only needs text back, so it gets none.
+operator's connectors. Skyler only needs text back, so it gets none.
 """
 
 import asyncio
@@ -12,9 +12,9 @@ import tempfile
 import pytest
 import pytest_asyncio
 
-import harvey.brain as brain_mod
-from harvey.brain import Brain
-from harvey.state import StateManager
+import skyler.brain as brain_mod
+from skyler.brain import Brain
+from skyler.state import StateManager
 
 
 @pytest_asyncio.fixture

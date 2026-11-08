@@ -1,16 +1,20 @@
-# Harvey
+# Skyler
 
 **An autonomous sales agent that runs on your Claude Code or Codex subscription.**
 
-Harvey finds businesses worth selling to, learns something specific about each one, writes cold email that references it, sends it, reads the replies, and works the conversation toward a meeting. It runs on your machine, in a loop, on its own.
+> Skyler is Michael Cambianica's renamed build of [Harvey](https://github.com/ethanplusai/harvey)
+> by Ethan Rogers, used under the MIT license. The name is the only thing that changed;
+> the engine is Ethan's. Upstream fixes are pulled in by hand.
 
-The unusual part: **there is no model API bill.** Harvey uses your Claude Pro or Max subscription through Claude Code, or your ChatGPT subscription through Codex. Model calls use the plan you already pay for, without an API key or per-token API billing. Claude is the default; [Codex is an opt-in provider on macOS and Linux](#using-a-chatgpt-plan-instead-codex).
+Skyler finds businesses worth selling to, learns something specific about each one, writes cold email that references it, sends it, reads the replies, and works the conversation toward a meeting. It runs on your machine, in a loop, on its own.
+
+The unusual part: **there is no model API bill.** Skyler uses your Claude Pro or Max subscription through Claude Code, or your ChatGPT subscription through Codex. Model calls use the plan you already pay for, without an API key or per-token API billing. Claude is the default; [Codex is an opt-in provider on macOS and Linux](#using-a-chatgpt-plan-instead-codex).
 
 ```
-$ harvey run
+$ skyler run
 
 ============================================================
-Harvey is online. Always Be Closing.
+Skyler is online. Always Be Closing.
 ============================================================
 Checking pipeline state...
 Decision: prospect (only 3 new prospects; pipeline needs leads)
@@ -27,14 +31,14 @@ And the dashboard it keeps, at `localhost:5555` — confirming a signal, buildin
 cohort out of the confirmed ones, pricing a discovery run before it spends
 anything, and approving mail one message at a time:
 
-![Harvey's dashboard: the Today queue, confirming a signal, the cohort builder counting matches live, a costed discovery estimate, and the outbox decisions desk — in light and dark](docs/dashboard.gif)
+![Skyler's dashboard: the Today queue, confirming a signal, the cohort builder counting matches live, a costed discovery estimate, and the outbox decisions desk — in light and dark](docs/dashboard.gif)
 
 ---
 
 ## Table of contents
 
 - [Why the subscription thing matters](#why-the-subscription-thing-matters)
-- [What Harvey actually does](#what-harvey-actually-does)
+- [What Skyler actually does](#what-skyler-actually-does)
 - [Quick start](#quick-start)
 - [You confirm what it looks for](#you-confirm-what-it-looks-for)
 - [The prospecting pipeline](#the-prospecting-pipeline)
@@ -57,9 +61,9 @@ anything, and approving mail one message at a time:
 
 Every other autonomous sales agent bills you per token. That is the whole reason they cost what they cost: an agent that thinks in a loop, all day, is an agent that burns API credits in a loop, all day. Vendors solve this by thinking less — shorter prompts, cheaper models, fewer passes.
 
-Harvey uses the subscription-backed CLI for the provider you choose: `claude` for Claude Code, or an isolated `codex app-server` for Codex. Both return text with model tools disabled. Harvey handles the prospecting and mail operations itself.
+Skyler uses the subscription-backed CLI for the provider you choose: `claude` for Claude Code, or an isolated `codex app-server` for Codex. Both return text with model tools disabled. Skyler handles the prospecting and mail operations itself.
 
-Your selected subscription covers model calls, subject to its usage limits. That lets Harvey use its skills library for personalization and reply handling without a separate model API bill.
+Your selected subscription covers model calls, subject to its usage limits. That lets Skyler use its skills library for personalization and reply handling without a separate model API bill.
 
 **What this costs you:**
 
@@ -71,17 +75,17 @@ Your selected subscription covers model calls, subject to its usage limits. That
 | Writing and sending | your subscription + a mailbox (~$7/mo Google Workspace) |
 | Prospecting tools | **none.** No Apollo, no ZoomInfo, no Clearbit, no Clay. |
 
-For comparison, the tools Harvey replaces start at $250–500/month — and they are weakest precisely where Harvey is strongest: small local businesses with 5–50 people, where single-provider contact coverage caps out around 30% and micro-businesses are frequently absent entirely.
+For comparison, the tools Skyler replaces start at $250–500/month — and they are weakest precisely where Skyler is strongest: small local businesses with 5–50 people, where single-provider contact coverage caps out around 30% and micro-businesses are frequently absent entirely.
 
-**Harvey also budgets itself.** It reads the active provider's subscription quota and throttles to leave headroom for your own Claude or Codex work. Set `max_daily_claude_percent: 80` for either provider—the setting's name predates Codex support. If quota cannot be read, Harvey reports it as unavailable and falls back to its daily call budget.
+**Skyler also budgets itself.** It reads the active provider's subscription quota and throttles to leave headroom for your own Claude or Codex work. Set `max_daily_claude_percent: 80` for either provider—the setting's name predates Codex support. If quota cannot be read, Skyler reports it as unavailable and falls back to its daily call budget.
 
-Harvey runs locally with your own login. Check the terms and usage limits of the provider you choose.
+Skyler runs locally with your own login. Check the terms and usage limits of the provider you choose.
 
 ---
 
-## What Harvey actually does
+## What Skyler actually does
 
-Harvey runs a heartbeat: wake up, check the budget, decide what most needs doing, do it, log it, sleep. Every 15 minutes by default.
+Skyler runs a heartbeat: wake up, check the budget, decide what most needs doing, do it, log it, sleep. Every 15 minutes by default.
 
 ```
                  ┌──────────────────────────────────────┐
@@ -112,49 +116,49 @@ Profiling and outbox draining ride along on **every** cycle regardless, because 
 ### Easiest: let Claude set it up
 
 ```bash
-git clone https://github.com/ethanplusai/harvey.git
-cd harvey
+git clone https://github.com/ethanplusai/harvey.git skyler
+cd skyler
 claude
 ```
 
-Then say: **"set up Harvey for me"**. The repo ships a `CLAUDE.md` that turns Claude Code into the setup wizard — it checks what state you're in, installs what's missing, asks what it needs, and trains Harvey on your product.
+Then say: **"set up Skyler for me"**. The repo ships a `CLAUDE.md` that turns Claude Code into the setup wizard — it checks what state you're in, installs what's missing, asks what it needs, and trains Skyler on your product.
 
 ### Or do it yourself
 
 ```bash
 # 1. Install — note python3.13, not python3. On macOS bare `python3` is the
-#    system 3.9, and a venv built from it can't run Harvey.
+#    system 3.9, and a venv built from it can't run Skyler.
 python3.13 -m venv .venv && source .venv/bin/activate && pip install -e .
 
 # 2. Configure — every variable is documented inline with where to get it
 cp .env.example .env && $EDITOR .env
 
 # 3. Learn your product from your website
-harvey train https://your-company.com
+skyler train https://your-company.com
 
 # 4. Choose what makes a good prospect (see below — this one matters)
-harvey signals --confirm free
+skyler signals --confirm free
 
 # 5. Find businesses. Free source, no account needed.
-harvey discover
+skyler discover
 
 # 6. Watch it work
-harvey dashboard          # http://localhost:5555
-harvey run
+skyler dashboard          # http://localhost:5555
+skyler run
 ```
 
 ---
 
 ## You confirm what it looks for
 
-This is the part that makes Harvey different from a black box, and it is deliberately not skippable.
+This is the part that makes Skyler different from a black box, and it is deliberately not skippable.
 
-Harvey knows how to collect **23 signals** about a business. It does not collect any of them until you say so. On first run it *proposes* the catalog; you confirm, skip, or reject each one in the dashboard or from the terminal:
+Skyler knows how to collect **23 signals** about a business. It does not collect any of them until you say so. On first run it *proposes* the catalog; you confirm, skip, or reject each one in the dashboard or from the terminal:
 
 ```bash
-harvey signals                       # review the catalog
-harvey signals --confirm free        # everything that costs nothing (21 of them)
-harvey signals --confirm SERP_RANK   # a paid one, opted into explicitly
+skyler signals                       # review the catalog
+skyler signals --confirm free        # everything that costs nothing (21 of them)
+skyler signals --confirm SERP_RANK   # a paid one, opted into explicitly
 ```
 
 Every signal shows what it is in plain language, **what it costs**, and how many companies already carry it.
@@ -183,7 +187,7 @@ Has a marketing agency  AND  running Google Ads  AND NOT  already has online boo
 → 23 companies
 ```
 
-That is a campaign with a reason behind it. You know exactly why each of those 23 is on the list, and so does the email Harvey writes them.
+That is a campaign with a reason behind it. You know exactly why each of those 23 is on the list, and so does the email Skyler writes them.
 
 ---
 
@@ -196,14 +200,14 @@ Four stages. Each one runs independently, re-runs safely, and states its cost.
 The only stage that spends money, so it always estimates first and never calls anything until you press go.
 
 ```bash
-harvey discover --providers   # the menu, with real prices
-harvey discover --estimate    # projected spend, then exits
-harvey discover               # go
+skyler discover --providers   # the menu, with real prices
+skyler discover --estimate    # projected spend, then exits
+skyler discover               # go
 ```
 
 | Source | Cost | Free tier | Best for |
 |---|---|---|---|
-| **OpenStreetMap** *(default)* | free | unlimited, no account | Trying the whole pipeline before paying anyone. Coverage is thin for businesses without a storefront: OSM maps premises, so whole trades are barely present (under 2,000 roofers and under 2,300 plumbers in the entire US). Harvey says so in the UI rather than quietly under-delivering. |
+| **OpenStreetMap** *(default)* | free | unlimited, no account | Trying the whole pipeline before paying anyone. Coverage is thin for businesses without a storefront: OSM maps premises, so whole trades are barely present (under 2,000 roofers and under 2,300 plumbers in the entire US). Skyler says so in the UI rather than quietly under-delivering. |
 | **DataForSEO Business Listings** | $0.372 / 1,000 | $1 credit | Local trades, clinics, contractors. Phone, domain, rating, claimed status — and it can filter for businesses with **no website at all**. |
 | **DataForSEO SERP** | $0.0018 / search | $1 credit + free sandbox | Rank as the buying signal. |
 | **Serper** | ~$0.30–1.00 / 1,000 | 2,500 free, no card | The easiest paid one to try. |
@@ -218,7 +222,7 @@ Cities geocode themselves (cached forever, one lookup each). Directories, aggreg
 
 Homepage, `robots.txt`, `sitemap.xml`, plus the team and careers pages when they exist — then regex over HTML already in hand. Out comes the incumbent agency, the ad pixels, the missing schema, the abandoned blog, the open roles, the named humans.
 
-Agency detection is the compounding one. Almost every agency credits itself in the footer, and Harvey scores the wording: *"Powered by"* / *"Website by"* → 0.9 confidence; a bare descriptive link → 0.75; an unlabelled link → 0.35 and **not recorded**. A wrong incumbent in an email is worse than saying nothing.
+Agency detection is the compounding one. Almost every agency credits itself in the footer, and Skyler scores the wording: *"Powered by"* / *"Website by"* → 0.9 confidence; a bare descriptive link → 0.75; an unlabelled link → 0.35 and **not recorded**. A wrong incumbent in an email is worse than saying nothing.
 
 ### 3. ENRICH — who decides
 
@@ -226,19 +230,19 @@ Free public registries first. Name plus title from the team page, confirmed agai
 
 ### 4. VERIFY — can you reach them
 
-Harvey learns each company's **address pattern** and verifies one candidate, rather than brute-forcing name variations. Raw SMTP probing is not viable from a laptop — outbound port 25 is usually blocked, and Google Workspace and Microsoft 365 accept everything from an unknown IP.
+Skyler learns each company's **address pattern** and verifies one candidate, rather than brute-forcing name variations. Raw SMTP probing is not viable from a laptop — outbound port 25 is usually blocked, and Google Workspace and Microsoft 365 accept everything from an unknown IP.
 
 Every address is tagged honestly: `verified` / `risky` (catch-all) / `guess` / `invalid`. **Only deliverable ones are ever sent to.** A guess is never treated as a win.
 
-> Harvey is worth running even if you never let it send. `harvey export` writes a sequencer-ready CSV of everything it found.
+> Skyler is worth running even if you never let it send. `skyler export` writes a sequencer-ready CSV of everything it found.
 
 ---
 
 ## The skills library
 
-Harvey's sales knowledge lives in `skills/` as **plain Markdown you can edit**. There is no fine-tuning, no vector store, no retrieval step. Before an agent runs, the skills it needs are concatenated straight into its prompt. Change a file, and the next heartbeat behaves differently — no restart, no code change.
+Skyler's sales knowledge lives in `skills/` as **plain Markdown you can edit**. There is no fine-tuning, no vector store, no retrieval step. Before an agent runs, the skills it needs are concatenated straight into its prompt. Change a file, and the next heartbeat behaves differently — no restart, no code change.
 
-This is the main way you shape Harvey. If its emails are too pushy, edit `email_frameworks.md`. If it mishandles a specific objection, edit `objection_handling.md` and add the response you'd actually give.
+This is the main way you shape Skyler. If its emails are too pushy, edit `email_frameworks.md`. If it mishandles a specific objection, edit `objection_handling.md` and add the response you'd actually give.
 
 ### What ships
 
@@ -250,7 +254,7 @@ This is the main way you shape Harvey. If its emails are too pushy, edit `email_
 
 **`lead_qualification.md`** — **BANT** for the first screen, ICP scoring 1–10 for prioritization, **MEDDIC** for anything complex. Includes explicit disqualification criteria, which matter more than the qualification ones.
 
-**`sales_methodology.md`** — The operating philosophy: the ABC loop, how a conversation should flow across stages, tone calibration, and the ethical lines Harvey does not cross.
+**`sales_methodology.md`** — The operating philosophy: the ABC loop, how a conversation should flow across stages, tone calibration, and the ethical lines Skyler does not cross.
 
 **`offer_strategy.md`** — The offer ladder by engagement level, and the rule that governs it: *never lead with an offer, never pitch in a cold email.* First contact exists to start a conversation. Offers come out only after genuine interest.
 
@@ -260,7 +264,7 @@ This is the main way you shape Harvey. If its emails are too pushy, edit `email_
 
 **`linkedin_outreach.md`** — Connection sequences and rate limits, opening with the risk section it should open with: automating LinkedIn violates their ToS, never use a fake identity, and if someone asks whether this is automated, say yes immediately.
 
-**Generated for your product by `harvey train <url>`:**
+**Generated for your product by `skyler train <url>`:**
 
 - **`product_knowledge.md`** — what you sell, the benefits, pricing, use cases, the pain you solve, buying triggers
 - **`competitive_intel.md`** — battle cards per competitor, differentiation angles, migration paths
@@ -269,7 +273,7 @@ This is the main way you shape Harvey. If its emails are too pushy, edit `email_
 
 ### Which agent gets which
 
-Defined in `harvey/brain.py` — edit the map to change it.
+Defined in `skyler/brain.py` — edit the map to change it.
 
 | Skill | Scout | Writer | Handler | Sender | LinkedIn |
 |---|:-:|:-:|:-:|:-:|:-:|
@@ -285,13 +289,13 @@ Defined in `harvey/brain.py` — edit the map to change it.
 | `product_knowledge` | ● | ● | ● | ● | ● |
 | `competitive_intel` | | ● | ● | | |
 
-Adding a skill: write the file, add its name to `skill_map` in `harvey/brain.py`. That's the whole process.
+Adding a skill: write the file, add its name to `skill_map` in `skyler/brain.py`. That's the whole process.
 
 ---
 
 ## The sub-agents
 
-Harvey feels like one agent. Underneath it's five, each loaded with different skills.
+Skyler feels like one agent. Underneath it's five, each loaded with different skills.
 
 | Agent | What it does |
 |---|---|
@@ -307,14 +311,14 @@ Conversation stages: `initial_outreach → engaged → qualifying → presenting
 
 ## Nothing sends without you
 
-By default **every outgoing email waits for your approval.** Harvey is a copilot until you decide otherwise.
+By default **every outgoing email waits for your approval.** Skyler is a copilot until you decide otherwise.
 
 The dashboard's Outbox is a decisions desk: one email fills the pane, the rest wait in a rail, and you work the queue with `A` approve, `R` reject, `J`/`K` to move. That shape is deliberate — a wall of stacked drafts invites a single approve-all reflex, which is exactly the review the approval ladder exists to force.
 
 ```bash
-harvey outbox                 # review from the terminal
-harvey outbox --approve-all
-harvey sending pause          # kill switch, stops everything mid-flight
+skyler outbox                 # review from the terminal
+skyler outbox --approve-all
+skyler sending pause          # kill switch, stops everything mid-flight
 ```
 
 Before anything leaves, a **deterministic pre-send gate** — no model involved — rejects: unrendered merge tags, banned phrases, emails over the length cap, too many links, HTML bodies, non-deliverable addresses, and any mismatch between the recipient and the database record.
@@ -326,17 +330,17 @@ When you trust it, set `channels.email.require_approval: false` for full autopil
 ## The dashboard
 
 ```bash
-harvey dashboard     # http://localhost:5555
+skyler dashboard     # http://localhost:5555
 ```
 
-Plain HTML, CSS and JavaScript served from `harvey/web/`. No build step, no framework, no bundler — edit `app.css` and reload. Fonts are vendored, so it renders correctly with the network off.
+Plain HTML, CSS and JavaScript served from `skyler/web/`. No build step, no framework, no bundler — edit `app.css` and reload. Fonts are vendored, so it renders correctly with the network off.
 
 - **Today** — an asymmetric two-column screen: anything waiting on a decision down the left with the activity feed beneath it, and a rail carrying pipeline figures, collector runs and setup. It opens here rather than on a setup checklist, because the question you actually have is "is anything waiting on me?" Setup lives in the rail and disappears entirely once it's done.
 - **Signals** — the confirmation gate and the cohort builder
 - **Discover** — the provider menu with prices side by side, an estimate, then a run
 - **Companies / Contacts** — everything found, with CSV export
 - **Outbox** — the decisions desk
-- **Conversations** — every reply and how Harvey handled it
+- **Conversations** — every reply and how Skyler handled it
 - **Usage** — Claude or Codex quota gauges and per-agent token counts. No dollar figures: you're on a subscription, you aren't billed per token, and pretending otherwise would be theater.
 
 Three rules hold the interface together:
@@ -353,7 +357,7 @@ Appearance has three states, not two. `auto` follows your OS and is the default,
 
 ## How the data is stored
 
-SQLite at `data/harvey.db`. One idea drives the schema:
+SQLite at `data/skyler.db`. One idea drives the schema:
 
 > **Every fact is a row, never a column.**
 
@@ -383,7 +387,7 @@ Two files, both plain text.
 
 **`.env`** — credentials. Every variable documented inline with where to get it. The only required one is a mail provider; everything else is optional.
 
-**`harvey.yaml`** — who Harvey is and who it sells to:
+**`skyler.yaml`** — who Skyler is and who it sells to:
 
 ```yaml
 persona:      { name, company, role, email, tone }
@@ -398,36 +402,36 @@ brain:        { provider: claude | codex, model, reasoning_effort }   # optional
 
 `max_daily_claude_percent` caps whichever subscription `brain.provider` uses (the name predates Codex support).
 
-If `harvey.local.yaml` exists it wins. It's gitignored, so a fork can carry real product configuration while the tracked `harvey.yaml` stays a template — nobody publishes their positioning and pricing by accident.
+If `skyler.local.yaml` exists it wins. It's gitignored, so a fork can carry real product configuration while the tracked `skyler.yaml` stays a template — nobody publishes their positioning and pricing by accident.
 
 ### Commands
 
 ```bash
-harvey run                   # the heartbeat loop
-harvey dashboard             # web UI at localhost:5555
-harvey signals               # review/confirm what to prospect against
-harvey discover              # find businesses; --providers / --estimate
-harvey profile               # read discovered companies' sites (free)
-harvey train <url>           # learn a product from its website (--provider codex --model gpt-5.5)
-harvey status                # pipeline summary
-harvey usage                 # active provider's quota + per-agent tokens
-harvey outbox                # review queued email
-harvey export                # deliverable prospects → CSV
-harvey sending pause|resume  # kill switch
-harvey gmail auth            # one-time Gmail OAuth
+skyler run                   # the heartbeat loop
+skyler dashboard             # web UI at localhost:5555
+skyler signals               # review/confirm what to prospect against
+skyler discover              # find businesses; --providers / --estimate
+skyler profile               # read discovered companies' sites (free)
+skyler train <url>           # learn a product from its website (--provider codex --model gpt-5.5)
+skyler status                # pipeline summary
+skyler usage                 # active provider's quota + per-agent tokens
+skyler outbox                # review queued email
+skyler export                # deliverable prospects → CSV
+skyler sending pause|resume  # kill switch
+skyler gmail auth            # one-time Gmail OAuth
 ```
 
 
 ## Using a ChatGPT plan instead (Codex)
 
-Claude is the default and needs no change. If you'd rather spend a ChatGPT plan (Plus, Pro, Business, …), Harvey can think through the [Codex CLI](https://developers.openai.com/codex) instead — still a subscription, never per-token API billing.
+Claude is the default and needs no change. If you'd rather spend a ChatGPT plan (Plus, Pro, Business, …), Skyler can think through the [Codex CLI](https://developers.openai.com/codex) instead — still a subscription, never per-token API billing.
 
 ```bash
-npm install -g @openai/codex@0.159.3   # the Codex version Harvey has verified (see Requirements)
+npm install -g @openai/codex@0.159.3   # the Codex version Skyler has verified (see Requirements)
 codex login                            # choose "Sign in with ChatGPT" — API-key logins are refused
 ```
 
-Then either pick **codex** in `harvey setup` (it suggests `gpt-5.5`), run `harvey train <url> --provider codex --model gpt-5.5`, or add to your config:
+Then either pick **codex** in `skyler setup` (it suggests `gpt-5.5`), run `skyler train <url> --provider codex --model gpt-5.5`, or add to your config:
 
 ```yaml
 brain:
@@ -438,28 +442,28 @@ brain:
 
 What to know:
 
-- **It's one or the other.** Harvey uses exactly the provider you configure. If Codex fails, the call fails with a clear log message; it never falls back to Claude (or to an API key). A Codex-only machine doesn't need Claude installed.
-- **Your Codex setup is left alone.** Each call runs throwaway `codex` processes in a private temporary home and empty workspace, so your `~/.codex/config.toml`, MCP servers, plugins, hooks, skills, `AGENTS.md` and memories are never loaded, and Harvey's model choice never changes your own Codex default.
-- **No tools, verified before every prompt.** Prompts contain untrusted text (prospect replies, scraped pages), so the model must have nothing to act with. Harvey disables every tool-providing Codex feature, web search, sub-agents, hooks, skills and project instructions, starts the thread with no execution environment, and then checks Codex's own reports (effective config, account type, thread settings, MCP status, hooks) before sending anything. Anything it can't confirm stops the call. During the turn, any attempted tool call, approval request or non-text item kills the runtime. A read-only sandbox is also set, as extra protection only.
-- **Your login only goes to OpenAI.** Before your login is put into the runtime at all, Harvey starts Codex without it and checks that requests would go to the built-in OpenAI provider and the default ChatGPT endpoint. Any custom provider, overridden built-in provider, base URL, telemetry exporter or other endpoint in any Codex config layer (for example `/etc/codex/config.toml` or a managed config) stops the call there.
-- **Login handling.** Harvey supports Codex's file credential storage (`~/.codex/auth.json`, or `$CODEX_HOME/auth.json`, mode `600`): the default unless you've configured an OS keyring. Keyring storage isn't supported. On every call Harvey reads that file (read-only, never writing or moving it) and gives the runtime a private copy *without the refresh token*, deleted after the call. Codex therefore can't change or renew your real login. When the login has expired, or is due for Codex's routine renewal (after about 8 days), Codex calls stop with "Your Codex login has expired or is due for renewal". Use Codex once yourself (it renews the login automatically) or run `codex login`, and Harvey picks up the renewed login on its next call. Harvey never renews it for you.
-- **Models.** Use `model: gpt-5.5`. It's the model Harvey has verified as text-only with Codex 0.159.3 (no code mode, no extra tools), and it works on ChatGPT plans even though Codex's live catalog hides it from the model picker. Codex's newer "code mode" models (`gpt-6-*`, `gpt-5.6-*`) always carry built-in code-execution tools that no setting removes, so Harvey refuses them. If you leave `model` blank, Harvey only auto-selects a model the catalog *lists* and that has no code mode or extra tools. On current ChatGPT accounts no listed model qualifies, so a blank `model` fails with an error naming the hidden models you can set explicitly, plus each model's reason. If you set `model`, Harvey uses exactly that model or fails; it never substitutes another. Naming a code-mode model gives an error listing the models that work.
-- **Quota.** The budget gate and dashboard read your ChatGPT plan's real rate-limit windows from Codex, for the limit bucket that applies to your model, and compare them to `usage.max_daily_claude_percent`. If Codex reports that usage is blocked, or a call fails on the plan's usage limit, Harvey treats the plan as full (even when no window is reported) and stops Codex calls for an hour. If the limits can't be read, the dashboard and `harvey usage` say "Quota unavailable" and the budget falls back to Harvey's own daily call count. Usage is recorded per provider; Codex calls are logged with tokens but no dollar cost, because the plan isn't billed per token.
-- **When Codex can't be used, Harvey pauses rather than guessing.** Before each heartbeat, Harvey checks everything a call needs except the prompt itself: the Codex CLI version, the isolation, your login (expired or due for renewal), your ChatGPT account, and that your configured model can run with no tools. No prompt is sent, so nothing is used from your plan beyond a quick account check. If something is wrong, the whole cycle is skipped: no reply is read or marked handled, nothing is drafted or sent. The log line, `harvey status`, and the dashboard's Actions card say "Codex paused" and why. If Codex stops working part-way through a cycle (for example the plan hits its usage limit), the reply being handled is left exactly as it was for a clean retry, not escalated, half-recorded or lost, and that cycle sends nothing. Fix the cause (usually `codex login`), and Harvey resumes on its next heartbeat: a renewed login or reinstalled CLI is noticed immediately, a usage-limit pause ends after an hour, and other fixes are picked up within 30 minutes. `harvey status --check` runs the same check on demand and exits non-zero if it fails. Brief failures (a crash or timeout) just skip one cycle. Harvey never falls back to Claude or an API key.
-- **Requirements.** **macOS or Linux**, Codex CLI **0.159.3** exactly, and Node.js for its npm package. **Windows isn't supported for Codex:** Harvey refuses it there before reading your login; use the Claude provider on Windows. Harvey checks the Codex version before every call and refuses any other version, including newer ones, because a different Codex can add tools Harvey's lockdown doesn't know about. Support for a new version comes with a Harvey update. Live use with a real ChatGPT account has been verified on macOS and ARM64 Linux. The offline suites also passed on x86-64 Linux under CPU emulation; CI covers Linux and macOS. The Docker image ships the Claude CLI only, so Codex isn't supported in Docker. To re-verify the lockdown offline against your installed CLI, with no credentials or network: `HARVEY_CODEX_CLI_TESTS=1 pytest tests/test_codex_cli_surface.py`.
+- **It's one or the other.** Skyler uses exactly the provider you configure. If Codex fails, the call fails with a clear log message; it never falls back to Claude (or to an API key). A Codex-only machine doesn't need Claude installed.
+- **Your Codex setup is left alone.** Each call runs throwaway `codex` processes in a private temporary home and empty workspace, so your `~/.codex/config.toml`, MCP servers, plugins, hooks, skills, `AGENTS.md` and memories are never loaded, and Skyler's model choice never changes your own Codex default.
+- **No tools, verified before every prompt.** Prompts contain untrusted text (prospect replies, scraped pages), so the model must have nothing to act with. Skyler disables every tool-providing Codex feature, web search, sub-agents, hooks, skills and project instructions, starts the thread with no execution environment, and then checks Codex's own reports (effective config, account type, thread settings, MCP status, hooks) before sending anything. Anything it can't confirm stops the call. During the turn, any attempted tool call, approval request or non-text item kills the runtime. A read-only sandbox is also set, as extra protection only.
+- **Your login only goes to OpenAI.** Before your login is put into the runtime at all, Skyler starts Codex without it and checks that requests would go to the built-in OpenAI provider and the default ChatGPT endpoint. Any custom provider, overridden built-in provider, base URL, telemetry exporter or other endpoint in any Codex config layer (for example `/etc/codex/config.toml` or a managed config) stops the call there.
+- **Login handling.** Skyler supports Codex's file credential storage (`~/.codex/auth.json`, or `$CODEX_HOME/auth.json`, mode `600`): the default unless you've configured an OS keyring. Keyring storage isn't supported. On every call Skyler reads that file (read-only, never writing or moving it) and gives the runtime a private copy *without the refresh token*, deleted after the call. Codex therefore can't change or renew your real login. When the login has expired, or is due for Codex's routine renewal (after about 8 days), Codex calls stop with "Your Codex login has expired or is due for renewal". Use Codex once yourself (it renews the login automatically) or run `codex login`, and Skyler picks up the renewed login on its next call. Skyler never renews it for you.
+- **Models.** Use `model: gpt-5.5`. It's the model Skyler has verified as text-only with Codex 0.159.3 (no code mode, no extra tools), and it works on ChatGPT plans even though Codex's live catalog hides it from the model picker. Codex's newer "code mode" models (`gpt-6-*`, `gpt-5.6-*`) always carry built-in code-execution tools that no setting removes, so Skyler refuses them. If you leave `model` blank, Skyler only auto-selects a model the catalog *lists* and that has no code mode or extra tools. On current ChatGPT accounts no listed model qualifies, so a blank `model` fails with an error naming the hidden models you can set explicitly, plus each model's reason. If you set `model`, Skyler uses exactly that model or fails; it never substitutes another. Naming a code-mode model gives an error listing the models that work.
+- **Quota.** The budget gate and dashboard read your ChatGPT plan's real rate-limit windows from Codex, for the limit bucket that applies to your model, and compare them to `usage.max_daily_claude_percent`. If Codex reports that usage is blocked, or a call fails on the plan's usage limit, Skyler treats the plan as full (even when no window is reported) and stops Codex calls for an hour. If the limits can't be read, the dashboard and `skyler usage` say "Quota unavailable" and the budget falls back to Skyler's own daily call count. Usage is recorded per provider; Codex calls are logged with tokens but no dollar cost, because the plan isn't billed per token.
+- **When Codex can't be used, Skyler pauses rather than guessing.** Before each heartbeat, Skyler checks everything a call needs except the prompt itself: the Codex CLI version, the isolation, your login (expired or due for renewal), your ChatGPT account, and that your configured model can run with no tools. No prompt is sent, so nothing is used from your plan beyond a quick account check. If something is wrong, the whole cycle is skipped: no reply is read or marked handled, nothing is drafted or sent. The log line, `skyler status`, and the dashboard's Actions card say "Codex paused" and why. If Codex stops working part-way through a cycle (for example the plan hits its usage limit), the reply being handled is left exactly as it was for a clean retry, not escalated, half-recorded or lost, and that cycle sends nothing. Fix the cause (usually `codex login`), and Skyler resumes on its next heartbeat: a renewed login or reinstalled CLI is noticed immediately, a usage-limit pause ends after an hour, and other fixes are picked up within 30 minutes. `skyler status --check` runs the same check on demand and exits non-zero if it fails. Brief failures (a crash or timeout) just skip one cycle. Skyler never falls back to Claude or an API key.
+- **Requirements.** **macOS or Linux**, Codex CLI **0.159.3** exactly, and Node.js for its npm package. **Windows isn't supported for Codex:** Skyler refuses it there before reading your login; use the Claude provider on Windows. Skyler checks the Codex version before every call and refuses any other version, including newer ones, because a different Codex can add tools Skyler's lockdown doesn't know about. Support for a new version comes with a Skyler update. Live use with a real ChatGPT account has been verified on macOS and ARM64 Linux. The offline suites also passed on x86-64 Linux under CPU emulation; CI covers Linux and macOS. The Docker image ships the Claude CLI only, so Codex isn't supported in Docker. To re-verify the lockdown offline against your installed CLI, with no credentials or network: `SKYLER_CODEX_CLI_TESTS=1 pytest tests/test_codex_cli_surface.py`.
 - **Overhead.** Each call checks the CLI version, starts Codex once without your login to verify its configuration, reads the model catalog, then starts it again to run the prompt; each heartbeat's check does the same without the prompt. That adds a few seconds per call, and one Brain's Codex calls run one at a time.
 
 ---
 
 ## Legal and deliverability
 
-Harvey automates outreach, but **you are the sender.** Cold email is legal in most places when done right and expensive when done wrong — CAN-SPAM penalties run to $53,088 per email. Harvey ships with compliant defaults. Keep them.
+Skyler automates outreach, but **you are the sender.** Cold email is legal in most places when done right and expensive when done wrong — CAN-SPAM penalties run to $53,088 per email. Skyler ships with compliant defaults. Keep them.
 
-**CAN-SPAM (US).** Truthful subject line and accurate from-address — Harvey's copywriting rules forbid fake "re:" threads and impersonation. A working opt-out, honored fast: Harvey treats any opt-out wording as immediate and permanent. Your physical mailing address in the footer — configure this before your first campaign.
+**CAN-SPAM (US).** Truthful subject line and accurate from-address — Skyler's copywriting rules forbid fake "re:" threads and impersonation. A working opt-out, honored fast: Skyler treats any opt-out wording as immediate and permanent. Your physical mailing address in the footer — configure this before your first campaign.
 
-**GDPR / PECR (EU & UK).** B2B cold email needs a defensible legitimate interest: the pitch must be genuinely relevant to that person's role, you must know where the data came from, and objecting must be effortless. If you can't say why a specific person would care, Harvey shouldn't email them — and its qualification rules say so.
+**GDPR / PECR (EU & UK).** B2B cold email needs a defensible legitimate interest: the pitch must be genuinely relevant to that person's role, you must know where the data came from, and objecting must be effortless. If you can't say why a specific person would care, Skyler shouldn't email them — and its qualification rules say so.
 
-**Bot disclosure.** Some jurisdictions require disclosing automation. Harvey is instructed to answer truthfully, always, if a prospect asks whether they're talking to an AI. Never configure it otherwise.
+**Bot disclosure.** Some jurisdictions require disclosing automation. Skyler is instructed to answer truthfully, always, if a prospect asks whether they're talking to an AI. Never configure it otherwise.
 
 **LinkedIn.** Browser automation violates LinkedIn's ToS and can get the account restricted. Off by default. If you turn it on, use an account you can afford to lose.
 
@@ -469,7 +473,7 @@ Harvey automates outreach, but **you are the sender.** Cold email is legal in mo
 2. Set up **SPF, DKIM and DMARC** on it. Without all three, Gmail junks you.
 3. **Warm up for 2–4 weeks** before real volume.
 4. **Ramp slowly** — 10–20/day per inbox, adding ~5/day. The `max_daily_sends: 50` default is a ceiling, not a target.
-5. **Watch bounces.** Above ~3%, stop and fix list quality. Harvey trips its own kill switch past your configured threshold.
+5. **Watch bounces.** Above ~3%, stop and fix list quality. Skyler trips its own kill switch past your configured threshold.
 
 *None of this is legal advice. Sending at scale or into regulated industries? Talk to a lawyer.*
 
@@ -477,9 +481,9 @@ Harvey automates outreach, but **you are the sender.** Cold email is legal in mo
 
 ## Troubleshooting
 
-**`command not found: harvey`** — `source .venv/bin/activate` first.
+**`command not found: skyler`** — `source .venv/bin/activate` first.
 
-**`ModuleNotFoundError: No module named 'harvey'` after install (macOS)** — Python 3.13 silently ignores `.pth` files carrying the macOS hidden flag, and some Macs propagate that flag into `.venv`. Run `harvey install` again (it auto-fixes), or: `ln -s "$(pwd)/harvey" .venv/lib/python3.13/site-packages/harvey`
+**`ModuleNotFoundError: No module named 'skyler'` after install (macOS)** — Python 3.13 silently ignores `.pth` files carrying the macOS hidden flag, and some Macs propagate that flag into `.venv`. Run `skyler install` again (it auto-fixes), or: `ln -s "$(pwd)/skyler" .venv/lib/python3.13/site-packages/skyler`
 
 **`externally-managed-environment`** — Use a venv, not system Python.
 
@@ -487,31 +491,31 @@ Harvey automates outreach, but **you are the sender.** Cold email is legal in mo
 
 **Claude headless mode fails** — `claude login`, and confirm the subscription is active. Test with `claude -p "say hi"`. In Docker, mount `~/.claude` into the container.
 
-**Codex calls fail** — Read the log line; every Codex error says what to do. "Not logged in" or "expired or is due for renewal" → use Codex once or run `codex login` with ChatGPT. "Hasn't been verified with Harvey" → install the supported Codex version named in the message. "Isolation could not be verified" → a Codex config layer outside your `~/.codex` (for example a managed or `/etc/codex` config) forces a tool, hook, MCP server, instructions or custom endpoint back on; Harvey refuses to send prompts until it's gone. "Always exposes tools" or "no Codex model is available" → set `brain.model: gpt-5.5` (the message lists each model and why). Harvey never switches to Claude on its own.
+**Codex calls fail** — Read the log line; every Codex error says what to do. "Not logged in" or "expired or is due for renewal" → use Codex once or run `codex login` with ChatGPT. "Hasn't been verified with Skyler" → install the supported Codex version named in the message. "Isolation could not be verified" → a Codex config layer outside your `~/.codex` (for example a managed or `/etc/codex` config) forces a tool, hook, MCP server, instructions or custom endpoint back on; Skyler refuses to send prompts until it's gone. "Always exposes tools" or "no Codex model is available" → set `brain.model: gpt-5.5` (the message lists each model and why). Skyler never switches to Claude on its own.
 
-**Discovery finds nothing** — Confirm signals first (`harvey signals --confirm free`); nothing is collected until you do. If you're on the free OpenStreetMap source, it only covers mapped trades and is thin for service-area businesses — `harvey discover --providers` shows the alternatives.
+**Discovery finds nothing** — Confirm signals first (`skyler signals --confirm free`); nothing is collected until you do. If you're on the free OpenStreetMap source, it only covers mapped trades and is thin for service-area businesses — `skyler discover --providers` shows the alternatives.
 
-**Overpass is throttling** — It's free volunteer infrastructure. Harvey walks three mirrors before giving up. Wait a few minutes, or use a paid provider for bulk work.
+**Overpass is throttling** — It's free volunteer infrastructure. Skyler walks three mirrors before giving up. Wait a few minutes, or use a paid provider for bulk work.
 
 **Emails land in spam** — Almost always the domain, not the copy. Check SPF/DKIM/DMARC, confirm warmup ran, halve your volume.
 
-**Harvey does nothing during the day** — Check `quiet_hours` and whether it hit `max_daily_claude_percent`. `harvey status` shows current state; the `actions` table logs every decision.
+**Skyler does nothing during the day** — Check `quiet_hours` and whether it hit `max_daily_claude_percent`. `skyler status` shows current state; the `actions` table logs every decision.
 
-**How do I stop it right now?** — `Ctrl+C`, or `harvey sending pause` to stop outbound while leaving the loop running. State is in SQLite, so it resumes cleanly.
+**How do I stop it right now?** — `Ctrl+C`, or `skyler sending pause` to stop outbound while leaving the loop running. State is in SQLite, so it resumes cleanly.
 
-**Where does my data live?** — All local: `data/harvey.db`, `.env`, `harvey.yaml`. Nothing goes anywhere except the APIs you configured.
+**Where does my data live?** — All local: `data/skyler.db`, `.env`, `skyler.yaml`. Nothing goes anywhere except the APIs you configured.
 
 ---
 
 ## Project structure
 
 ```
-harvey/
+skyler/
 ├── main.py              # heartbeat loop
 ├── brain.py             # Claude/Codex provider selection + skills + usage
 ├── codex.py             # Isolated Codex subscription runtime
 ├── state.py             # SQLite schema, migrations, observations, cohorts
-├── signals.py           # the 23-signal catalog Harvey proposes
+├── signals.py           # the 23-signal catalog Skyler proposes
 ├── pipeline.py          # DISCOVER → PROFILE chaining
 ├── gate.py              # deterministic pre-send checks
 ├── dashboard.py         # FastAPI JSON API
@@ -531,9 +535,9 @@ tests/                   # 242 tests
 
 ## Philosophy
 
-**Autonomous doesn't mean unsupervised.** Quiet hours, spend caps, send limits, an approval queue, a deterministic pre-send gate, and a kill switch. Harvey asks before it spends and before it sends, until you tell it not to.
+**Autonomous doesn't mean unsupervised.** Quiet hours, spend caps, send limits, an approval queue, a deterministic pre-send gate, and a kill switch. Skyler asks before it spends and before it sends, until you tell it not to.
 
-**You decide what a good prospect is.** Harvey proposes signals; you confirm them. A prospect list you can't explain is a prospect list you shouldn't send to.
+**You decide what a good prospect is.** Skyler proposes signals; you confirm them. A prospect list you can't explain is a prospect list you shouldn't send to.
 
 **If it can be gotten deterministically, don't use a model.** Rank position, tech detection, junk filtering, the priority decision, the pre-send gate — all plain code. Claude or Codex is reserved for the parts that need judgment. That's why this runs on a subscription at all.
 
@@ -541,7 +545,7 @@ tests/                   # 242 tests
 
 **The database is the asset, not the agent.** The initial list is worth little. The same signals observed over quarters — who changed agencies, who started spending on ads, who let their content go stale — is worth a great deal.
 
-**Everything is editable.** Prompts, skills, config, the dashboard. All plain text. You don't need to be a developer to change how Harvey sells.
+**Everything is editable.** Prompts, skills, config, the dashboard. All plain text. You don't need to be a developer to change how Skyler sells.
 
 ---
 

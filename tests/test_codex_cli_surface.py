@@ -1,8 +1,8 @@
-"""Opt-in check of Harvey's Codex lockdown against the REAL installed Codex CLI.
+"""Opt-in check of Skyler's Codex lockdown against the REAL installed Codex CLI.
 
 Run after installing or upgrading Codex:
 
-    HARVEY_CODEX_CLI_TESTS=1 pytest tests/test_codex_cli_surface.py
+    SKYLER_CODEX_CLI_TESTS=1 pytest tests/test_codex_cli_surface.py
 
 No real credentials, no network, no inference. Two kinds of check:
 
@@ -10,8 +10,8 @@ No real credentials, no network, no inference. Two kinds of check:
   records exactly what the model would be given (tool list, instructions,
   input). Only the provider-identity and endpoint checks are relaxed so the
   mock can stand in for OpenAI; every other attestation runs unchanged.
-* Route: with Harvey's checks NOT relaxed, hostile endpoint settings point
-  Codex at a localhost "attacker" that records every request. Harvey must
+* Route: with Skyler's checks NOT relaxed, hostile endpoint settings point
+  Codex at a localhost "attacker" that records every request. Skyler must
   refuse before the (fake) login reaches it. A control run with the check
   disabled proves the attacker would otherwise receive the token.
 """
@@ -28,12 +28,12 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
-import harvey.codex as hc
+import skyler.codex as hc
 
 pytestmark = pytest.mark.skipif(
-    os.environ.get("HARVEY_CODEX_CLI_TESTS") != "1" or not shutil.which("codex")
+    os.environ.get("SKYLER_CODEX_CLI_TESTS") != "1" or not shutil.which("codex")
     or sys.platform == "win32",
-    reason="set HARVEY_CODEX_CLI_TESTS=1 with the Codex CLI installed",
+    reason="set SKYLER_CODEX_CLI_TESTS=1 with the Codex CLI installed",
 )
 
 EVIL_MCP = """
@@ -134,7 +134,7 @@ def mock_codex(monkeypatch, tmp_path):
             'model_provider = "mock"\n' + body
             + "\n[model_providers.mock]\nname = \"mock\"\n"
             + f"base_url = \"http://127.0.0.1:{port}/v1\"\nwire_api = \"responses\"\n"
-            + "env_key = \"HARVEY_MOCK_KEY\"\nrequest_max_retries = 0\nstream_max_retries = 0\n"
+            + "env_key = \"SKYLER_MOCK_KEY\"\nrequest_max_retries = 0\nstream_max_retries = 0\n"
             + "supports_websockets = false\n"
             + extra["toml"]
         )
@@ -149,8 +149,8 @@ def mock_codex(monkeypatch, tmp_path):
         {k: v for k, v in config.items() if k != "model_providers"}))
     monkeypatch.setattr(hc, "REQUIRED_SETTINGS", {
         k: v for k, v in hc.REQUIRED_SETTINGS.items() if k != "forced_login_method"})
-    monkeypatch.setattr(hc, "ENV_ALLOWLIST", hc.ENV_ALLOWLIST | {"HARVEY_MOCK_KEY"})
-    monkeypatch.setenv("HARVEY_MOCK_KEY", "not-a-real-key")
+    monkeypatch.setattr(hc, "ENV_ALLOWLIST", hc.ENV_ALLOWLIST | {"SKYLER_MOCK_KEY"})
+    monkeypatch.setenv("SKYLER_MOCK_KEY", "not-a-real-key")
     # ChatGPT account checks need the real backend; they are unit-tested.
     async def skip_account(self, server, deadline):
         return None
@@ -333,7 +333,7 @@ async def test_real_cli_hostile_route_never_receives_the_login(attacker, route, 
             await client.run("ping", timeout=60)
         else:
             await client.read_rate_limits(timeout=60)
-    # Refused by Harvey's attestation, or by Codex rejecting the config
+    # Refused by Skyler's attestation, or by Codex rejecting the config
     # outright (it refuses to let `openai` be redefined).
     assert err.value.kind in ("isolation", "protocol")
     assert attacker.requests == []
@@ -382,7 +382,7 @@ def _bundled_catalog(tmp_path) -> dict:
 @pytest.mark.asyncio
 async def test_real_cli_unlisted_toolless_model_only_runs_when_explicit(
         mock_codex, monkeypatch, tmp_path):
-    """A live catalog may stop *listing* a tool-less model. Harvey must not
+    """A live catalog may stop *listing* a tool-less model. Skyler must not
     pick it on its own, but must run it, with no tools, when it is named."""
     monkeypatch.setattr(hc, "DISABLED_FEATURES",
                         hc.DISABLED_FEATURES + ("enable_request_compression",))

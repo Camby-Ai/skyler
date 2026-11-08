@@ -18,9 +18,9 @@ from pathlib import Path
 
 import pytest
 
-import harvey.codex as hc
+import skyler.codex as hc
 
-# The Codex provider supports macOS and Linux only (see harvey.codex).
+# The Codex provider supports macOS and Linux only (see skyler.codex).
 pytestmark = pytest.mark.skipif(sys.platform == "win32",
                                 reason="the Codex provider isn't supported on Windows")
 
@@ -57,7 +57,7 @@ def _write_login(home: Path, expires_in: float = 86400, refreshed_ago: float = 3
 @pytest.fixture(autouse=True)
 def private_tempdir(monkeypatch, tmp_path):
     """Runtimes go under this test's own temp dir, so leftover checks can't
-    race other Harvey processes sharing the system temp folder."""
+    race other Skyler processes sharing the system temp folder."""
     runtimes = tmp_path / "runtimes"
     runtimes.mkdir()
     monkeypatch.setattr(tempfile, "tempdir", str(runtimes))
@@ -125,7 +125,7 @@ async def test_isolated_turn_returns_final_answer_and_usage(fake, native_home):
     result = await _client(native_home).run(PROMPT, timeout=30)
 
     assert result.text == '{"intent": "interested"}'  # final_answer, not commentary
-    assert result.model == "gpt-5.5"  # Harvey's tool-less default, not Codex's
+    assert result.model == "gpt-5.5"  # Skyler's tool-less default, not Codex's
     assert result.thread_id == "thr-1"
     assert result.duration_ms == 850
     # The turn total (two model responses), not just the last response (5/1).
